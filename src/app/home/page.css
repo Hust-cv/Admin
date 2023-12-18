@@ -1,0 +1,69 @@
+/* home/page.css */
+.main-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .content-container {
+    flex-grow: 1;
+    background-color: #f0f0f0;
+    padding: 20px;
+  }
+  
+  .sidebar-container {
+    white-space: nowrap;
+    color: white;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    width: 250px;
+    height: 100vh;
+    background-color: #155e94;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .logo-big, .logo-small {
+    background: #155e94;
+    color: white;
+    text-align: center;
+  }
+  
+  .logo-small{
+    margin-bottom: 10px;
+  }
+  .logo-big {
+    margin-top: 10px;
+    font-size: 2rem;
+    line-height: 1.75rem;
+  }
+  .menu-container {
+    background-color: #155e94;
+  }
+  .menu-item {
+    font-size: 1.15rem;
+    padding: 15px;
+    cursor: pointer;
+  }
+  
+  .menu-item:hover {
+    background-color: #2470aa;
+  }
+  
+
+  
+  .menu-item {
+    padding-left: 30px;
+  }
+  
+  .menu {
+    display: flex;
+    flex-direction: column;
+  }
+  
+.menu-container .menu-item {
+    padding-left: 50px;
+}
+.children{
+  font-size: 1rem;
+ }

@@ -1,0 +1,71 @@
+.custom-table {
+    /* Common styles for the table */
+    width: 100%; /* Ensure the table occupies the full width */
+    border-collapse: collapse; /* Remove space between cells */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Add shadow to the table */
+    margin-top: 20px; /* Space from the top */
+    font-size: 0.9em; /* Font size */
+}
+
+.custom-table th {
+    background-color: #f8f9fa;
+    color: #000;
+    text-align: center;
+    padding: 12px 15px; /* Padding for header */
+    border-bottom: 1px solid #dee2e6; /* Bottom border */
+}
+
+.custom-table td {
+    color: #1677FF;
+    text-align: center;
+    vertical-align: middle;
+    padding: 10px 15px; /* Padding for cells */
+    border-bottom: 1px solid #dee2e6; /* Bottom border for each cell */
+}
+
+/* Style for buttons inside the table */
+.custom-table .btn {
+    padding: 5px 10px; /* Adjust padding size */
+    border-radius: 4px; /* Round the corners */
+    font-size: 0.8em; /* Font size for text inside buttons */
+}
+
+
+
+
+
+.custom-button {
+    /* Add your custom styles here */
+    background-color: #0447e4; /* Set your preferred background color */
+    color: #fff; /* Set your preferred text color */
+    border: 1px solid #3816a9; /* Set your preferred border color */
+    padding: 10px 20px; /* Adjust padding as needed */
+    cursor: pointer;
+  }
+
+
+/* Màu nền cho nút màu xanh */
+.button-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff; /* Màu chữ trắng */
+    transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu trong 0.3 giây */
+}
+
+.button-success:hover {
+    background-color: #dc3545; /* Màu đỏ khi di chuột vào */
+    border-color: #dc3545;
+}
+
+/* Màu nền cho nút màu đỏ */
+.button-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff; /* Màu chữ trắng */
+    transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu trong 0.3 giây */
+}
+
+.button-danger:hover {
+    background-color: #28a745; /* Màu xanh khi di chuột vào */
+    border-color: #28a745;
+}
