@@ -33,7 +33,7 @@ const UserInfoModal: React.FC<Props> = ({ user, show, handleClose }) => {
         <Modal.Title>Thông tin tài khoản</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>Username: {user.username}</p>
+        <p>Tài khoản: {user.username}</p>
         <p>Email: {user.email}</p>
         <p>Phone Number: {user.phoneNumber}</p>
         <p>Birthday: {user.birthDay}</p>

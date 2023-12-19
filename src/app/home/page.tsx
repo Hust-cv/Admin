@@ -96,8 +96,8 @@ export default function Page() {
     <div className="sidebar-container">
       {isValidToken ? (
         <div>
-          <div className='logo-big'>L&P</div>
-          <div className='logo-small'>Lucky and Power</div>
+          <div className='logo-big'>HustCV</div>
+          <div className='logo-small'>Ứng dụng tìm kiếm việc làm</div>
           {adminData && ( // Check if teacherData is not null
         <div className='menu'>
           <div className='menu-item' onClick={() => setIsMenuExpanded(!isMenuExpanded)}>
@@ -116,7 +116,7 @@ export default function Page() {
             <div className='menu-item' onClick={() => setIsCoursesExpanded(!isCoursesExpanded)}>Menu</div>
             {isCoursesExpanded && (
               <div className='menu-container'>
-                <div className='menu-item children' onClick={() => handleShowClassrooms()}>Danh sách tài khoản</div>
+                <div className='menu-item children' onClick={() => handleShowClassrooms()}>Danh sách người dùng</div>
               </div>
             )}
             {/* Other menu items */}
