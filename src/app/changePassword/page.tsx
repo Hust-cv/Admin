@@ -5,6 +5,19 @@ import Form from 'react-bootstrap/Form';
 import { getCookie } from '@/getCookie/getCookie';
 import { useRouter } from 'next/navigation'
 import deleteCookie from '@/getCookie/deleteCookie';
+import { config } from '@/config/config';
+import styled from 'styled-components';
+import 'bootstrap/dist/css/bootstrap.min.css';
+const Body = styled.div`
+background: #f6f5f7;
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+font-family: "Montserrat", sans-serif;
+height: 100vh;
+margin: -20px 0 50px;
+`;
 function BasicExample() {
   const router = useRouter();
     const [oldPassword, setOldPassword] = useState<string>('');
@@ -23,7 +36,7 @@ function BasicExample() {
     try {
         
       const token = getCookie('token');
-      const response = await fetch('http://localhost:6868/api/admin/changePassword', {
+      const response = await fetch(`${config.apiUrl}/admin/changePassword`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -42,8 +55,11 @@ function BasicExample() {
       alert("Mật khẩu cũ không đúng")
     }
   };
-
+  const handleCancel = () => {
+    router.push("/admin")
+  };
   return (
+    <Body>
     <Form onSubmit={handleSubmit}>
       <Form.Group className="mb-3" controlId="formBasicOldPassword">
         <Form.Label>Nhập mật khẩu cũ</Form.Label>
@@ -80,10 +96,16 @@ function BasicExample() {
           onChange={(e) => setShowPassword(e.target.checked)} />
       </Form.Group>
 
-      <Button variant="primary" type="submit">
-        Xác nhận
-      </Button>
+      <>
+        <Button variant="danger" onClick={handleCancel}>
+          Hủy
+        </Button>{' '}
+        <Button variant="primary" onClick={handleSubmit}>
+          Xác nhận
+        </Button>
+      </>
     </Form>
+    </Body>
   );
 }
 

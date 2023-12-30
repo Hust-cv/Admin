@@ -1,10 +1,20 @@
 "use client"
 import React, { useState } from "react";
 import { useEffect } from 'react';
-import "./styles.css";
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation'
-
+import { config } from '@/config/config';
+import { message } from 'antd';
+const Body = styled.div`
+background: #f6f5f7;
+display: flex;
+justify-content: center;
+align-items: center;
+flex-direction: column;
+font-family: "Montserrat", sans-serif;
+height: 100vh;
+margin: -20px 0 50px;
+`;
 const Container = styled.div`
  background-color: #fff;
  border-radius: 10px;
@@ -30,10 +40,10 @@ const SignUpContainer = styled.div`
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
-  ` 
-  : null}
+  `
+    : null}
  `;
- 
+
 
 const SignInContainer = styled.div`
  position: absolute;
@@ -45,7 +55,7 @@ const SignInContainer = styled.div`
  z-index: 2;
  ${props => (props.$signinIn !== true ? `transform: translateX(100%);` : null)}
  `;
- 
+
 const Form = styled.form`
  background-color: #ffffff;
  display: flex;
@@ -56,21 +66,23 @@ const Form = styled.form`
  height: 100%;
  text-align: center;
  `;
- 
+
 const Title = styled.h1`
+font-size: 30px;
  font-weight: bold;
  margin: 0;
  `;
- 
+
 const Input = styled.input`
+font-size: 14px;
  background-color: #eee;
  border: none;
- padding: 12px 15px;
- margin: 8px 0;
+ padding: 10px 15px;
+ margin: 5px 0;
  width: 100%;
  color: black;
  `;
- 
+
 
 const Button = styled.button`
     border-radius: 20px;
@@ -94,7 +106,7 @@ const GhostButton = styled(Button)`
  background-color: transparent;
  border-color: #ffffff;
  `;
- 
+
 const Anchor = styled.a`
  color: #333;
  font-size: 14px;
@@ -111,7 +123,7 @@ overflow: hidden;
 transition: transform 0.6s ease-in-out;
 z-index: 100;
 ${props =>
-  props.$signinIn !== true ? `transform: translateX(-100%);` : null}
+    props.$signinIn !== true ? `transform: translateX(-100%);` : null}
 `;
 
 const Overlay = styled.div`
@@ -130,7 +142,7 @@ transform: translateX(0);
 transition: transform 0.6s ease-in-out;
 ${props => (props.$signinIn !== true ? `transform: translateX(50%);` : null)}
 `;
- 
+
 const OverlayPanel = styled.div`
      position: absolute;
      display: flex;
@@ -165,6 +177,7 @@ const Paragraph = styled.p`
   margin: 20px 0 30px
  `;
 
+
 function setCookie(cname, cvalue, exdays) {
   const d = new Date();
   d.setTime(d.getTime() + 3 * 24 * 60 * 60 * 1000);
@@ -176,7 +189,7 @@ function getCookie(cname) {
   const name = cname + "=";
   const decodedCookie = decodeURIComponent(document.cookie);
   const ca = decodedCookie.split(';');
-  
+
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
     while (c.charAt(0) === ' ') {
@@ -186,18 +199,51 @@ function getCookie(cname) {
       return c.substring(name.length, c.length);
     }
   }
-  
+
   return "";
 }
 
 export default function Page() {
   const router = useRouter();
+  const [messageApi, contextHolder] = message.useMessage();
+  const key = 'updatable';
+
+  const openMessageSuccess = (text) => {
+    messageApi.open({
+      key,
+      type: 'loading',
+      content: 'Loading...',
+    });
+    setTimeout(() => {
+      messageApi.open({
+        key,
+        type:'success',
+        content: text,
+        duration: 2,
+      });
+    }, 500);
+  };
+  const openMessageError = (text) => {
+    messageApi.open({
+      key,
+      type: 'loading',
+      content: 'Loading...',
+    });
+    setTimeout(() => {
+      messageApi.open({
+        key,
+        type:'error',
+        content: text,
+        duration: 2,
+      });
+    }, 500);
+  };
   useEffect(() => {
     // Function to check the token
     const checkTokenValidity = async () => {
       try {
         const token = getCookie('token');
-        const response = await fetch('http://localhost:6868/api/admin/auth/me',{
+        const response = await fetch(`${config.apiUrl}/admin/auth/me`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -245,21 +291,21 @@ export default function Page() {
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!signIn && !isPasswordMatch()) {
-      alert('Mật khẩu và xác nhận mật khẩu không khớp!');
+      openMessageError('Mật khẩu và xác nhận mật khẩu không khớp!');
       return;
     }
     if (!signIn && (!formData.fullName || !formData.email || !formData.userName || !formData.passWord || !formData.confirmPassWord || !isPasswordMatch())) {
-      alert('Vui lòng điền đầy đủ tất cả các trường thông tin!');
+      openMessageError('Vui lòng điền đầy đủ tất cả các trường thông tin!');
       return;
     }
     if (signIn && (!formData.userName || !formData.passWord)) {
-      alert('Vui lòng điền đầy đủ tất cả các trường thông tin!');
+      openMessageError('Vui lòng điền đầy đủ tất cả các trường thông tin!');
       return;
     }
     try {
       const url = signIn
-        ? 'http://localhost:6868/api/admin/login'
-        : 'http://localhost:6868/api/admin/register';
+        ? `${config.apiUrl}/admin/login`
+        : `${config.apiUrl}/admin/register`;
 
       const response = await fetch(url, {
         method: 'POST',
@@ -267,131 +313,134 @@ export default function Page() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
-        // credentials: 'include', // Bật chia sẻ cookie giữa frontend và backend
       });
 
-      console.log('Phản hồi từ máy chủ:', response);
+      // console.log('Phản hồi từ máy chủ:', response);
       const { statusText } = response;
-      if (statusText == 'Conflict'){
-        alert('Tài khoản hoặc số điện thoại đã tồn tại')
+      if (statusText == 'Conflict') {
+        openMessageError('Tài khoản hoặc email đã tồn tại')
       }
-      else if(statusText == 'Created'){
-        alert('Đăng ký tài khoản thành công')
+      else if (statusText == 'Created') {
+        openMessageSuccess('Đăng ký tài khoản thành công')
         setSignIn(true)
       }
-      else if(statusText == 'Unauthorized'){
-        alert('Tài khoản hoặc mật khẩu không đúng')
+      else if (statusText == 'Unauthorized') {
+        openMessageError('Tài khoản hoặc mật khẩu không đúng')
       }
-      else if(statusText == 'OK'){
-      const responseData = await response.json();
-      setCookie('token',responseData.token,1);
-      alert('Đăng nhập thành công');
-      router.push('/home');
+      else if (statusText == 'OK') {
+        const responseData = await response.json();
+        setCookie('token', responseData.token, 1);
+        openMessageSuccess('Đăng nhập thành công, tự động chuyển trang admin');
+        router.push('/admin');
 
-      // Save the token to the browser's localStorage
-      // localStorage.setItem('accessToken', responseData.token);
       }
     } catch (error) {
-      console.error('Lỗi:', error);
+      openMessageError('Lỗi');
     }
   };
-
+const handleDangKy=()=>{
+openMessageError('Bạn không được phép sử dụng tính năng này')
+}
   return (
-    <Container>
-      <SignUpContainer $signinIn={signIn}>
-        <Form onSubmit={handleFormSubmit}>
-          <Title>{signIn ? 'Đăng nhập' : 'Tạo tài khoản'}</Title>
-          {!signIn && (
-            <Input
-              type='fullName'
-              name='fullName'
-              placeholder='Họ và tên'
-              value={formData.fullName}
-              onChange={handleInputChange}
-            />
-          )}
-          {!signIn && (
-            <Input
-              type='email'
-              name='email'
-              placeholder='Email'
-              value={formData.email}
-              onChange={handleInputChange}
-            />
-          )}
-          <Input
-            type='userName'
-            name='userName'
-            placeholder='Tài khoản'
-            value={formData.userName}
-            onChange={handleInputChange}
-          />
-          <Input
-            type='passWord'
-            name='passWord'
-            placeholder='Mật khẩu'
-            value={formData.passWord}
-            onChange={handleInputChange}
-          />
-          <Input
-            type='password'
-            name='confirmPassWord'
-            placeholder='Xác nhận lại mật khẩu'
-            value={formData.confirmPassWord}
-            onChange={handleInputChange}
-            style={{ borderColor: isPasswordMatch() ? 'initial' : 'red' }}
-          />
-          <Button type='submit'>{signIn ? 'Đăng nhập' : 'Đăng ký'}</Button>
-        </Form>
-      </SignUpContainer>
+    <>{contextHolder}
+      <Body>
+        <Container>
+          <SignUpContainer $signinIn={signIn}>
+            <Form onSubmit={handleFormSubmit}>
+              <Title>{signIn ? 'Đăng nhập' : 'Tạo tài khoản'}</Title>
+              {!signIn && (
+                <Input
+                  type='fullName'
+                  name='fullName'
+                  placeholder='Họ và tên'
+                  value={formData.fullName}
+                  onChange={handleInputChange}
+                />
+              )}
+              {!signIn && (
+                <Input
+                  type='email'
+                  name='email'
+                  placeholder='Email'
+                  value={formData.email}
+                  onChange={handleInputChange}
+                />
+              )}
+              <Input
+                type='userName'
+                name='userName'
+                placeholder='Tài khoản'
+                value={formData.userName}
+                onChange={handleInputChange}
+              />
+              <Input
+                type='passWord'
+                name='passWord'
+                placeholder='Mật khẩu'
+                value={formData.passWord}
+                onChange={handleInputChange}
+              />
+              <Input
+                type='password'
+                name='confirmPassWord'
+                placeholder='Xác nhận lại mật khẩu'
+                value={formData.confirmPassWord}
+                onChange={handleInputChange}
+                style={{ borderColor: isPasswordMatch() ? 'initial' : 'red' }}
+              />
+              <Button type='submit'>{signIn ? 'Đăng nhập' : 'Đăng ký'}</Button>
+            </Form>
+          </SignUpContainer>
 
-      <SignInContainer $signinIn={signIn}>
-        <Form onSubmit={handleFormSubmit}>
-          <Title>Đăng nhập</Title>
-          <Input
-            type='userName'
-            name='userName'
-            placeholder='Tài khoản'
-            value={formData.userName}
-            onChange={handleInputChange}
-          />
-          <Input
-            type='passWord'
-            name='passWord'
-            placeholder='Mật khẩu'
-            value={formData.passWord}
-            onChange={handleInputChange}
-          />
+          <SignInContainer $signinIn={signIn}>
+            <Form onSubmit={handleFormSubmit}>
+              <Title>Đăng nhập</Title>
+              <Input
+                type='userName'
+                name='userName'
+                placeholder='Tài khoản'
+                value={formData.userName}
+                onChange={handleInputChange}
+              />
+              <Input
+                type='passWord'
+                name='passWord'
+                placeholder='Mật khẩu'
+                value={formData.passWord}
+                onChange={handleInputChange}
+              />
 
-          <Anchor href='#'>Quên mật khẩu?</Anchor>
-          <Button type='submit'>Đăng nhập</Button>
-        </Form>
-      </SignInContainer>
-  
-        <OverlayContainer $signinIn={signIn}>
-          <Overlay $signinIn={signIn}>
-            <LeftOverlayPanel $signinIn={signIn}>
-              <Title>Chào mừng trở lại!</Title>
-              <Paragraph>
-                Để kết nối với chúng tôi, vui lòng đăng nhập bằng thông tin cá nhân của bạn
-              </Paragraph>
-              <GhostButton onClick={handleToggle}>
-                Đăng nhập
-              </GhostButton>
-            </LeftOverlayPanel>
-  
-            <RightOverlayPanel $signinIn={signIn}>
-              <Title>Xin chào, bạn!</Title>
-              <Paragraph>
-                Nhập thông tin cá nhân của bạn và bắt đầu cuộc hành trình cùng chúng tôi
-              </Paragraph>
-              <GhostButton onClick={handleToggle}>
-                Đăng ký
-              </GhostButton>
-            </RightOverlayPanel>
-          </Overlay>
-        </OverlayContainer>
-      </Container>
-    );
-  }
+              <Anchor href='#'>Quên mật khẩu?</Anchor>
+              <Button type='submit'>Đăng nhập</Button>
+            </Form>
+          </SignInContainer>
+
+          <OverlayContainer $signinIn={signIn}>
+            <Overlay $signinIn={signIn}>
+              <LeftOverlayPanel $signinIn={signIn}>
+                <Title>Chào mừng trở lại!</Title>
+                <Paragraph>
+                  Để kết nối với chúng tôi, vui lòng đăng nhập bằng thông tin cá nhân của bạn
+                </Paragraph>
+                <GhostButton onClick={handleToggle}>
+                  Đăng nhập
+                </GhostButton>
+              </LeftOverlayPanel>
+
+              <RightOverlayPanel $signinIn={signIn}>
+                <Title>Xin chào, bạn!</Title>
+                <Paragraph>
+                  Nhập thông tin cá nhân của bạn và bắt đầu cuộc hành trình cùng chúng tôi
+                </Paragraph>
+                <GhostButton onClick={handleToggle}>
+                  Đăng ký
+                </GhostButton>
+              </RightOverlayPanel>
+            </Overlay>
+          </OverlayContainer>
+        </Container>
+      </Body>
+    </>
+  );
+}
 
