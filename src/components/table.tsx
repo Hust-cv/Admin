@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Table, Button, Form } from 'react-bootstrap';
 import { message } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilter} from '@fortawesome/free-solid-svg-icons';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import UserInfoModal from './userInfoModal';
 import { getCookie } from '@/getCookie/getCookie';
 import { config } from '@/config/config';
 import 'bootstrap/dist/css/bootstrap.min.css';
-interface UserData{
+interface UserData {
   id: number;
   username: string;
   email: string;
@@ -41,7 +41,7 @@ interface Props {
 }
 
 
-const Apptable = (props:Props) => {
+const Apptable = (props: Props) => {
   let token = getCookie('token');
   const { blogs, customFunction } = props;
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
@@ -50,7 +50,7 @@ const Apptable = (props:Props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const key = 'updatable';
 
-  const openMessageSuccess = (text:string) => {
+  const openMessageSuccess = (text: string) => {
     messageApi.open({
       key,
       type: 'loading',
@@ -59,13 +59,13 @@ const Apptable = (props:Props) => {
     setTimeout(() => {
       messageApi.open({
         key,
-        type:'success',
+        type: 'success',
         content: text,
         duration: 2,
       });
     }, 500);
   };
-  const openMessageError = (text:string) => {
+  const openMessageError = (text: string) => {
     messageApi.open({
       key,
       type: 'loading',
@@ -74,7 +74,7 @@ const Apptable = (props:Props) => {
     setTimeout(() => {
       messageApi.open({
         key,
-        type:'error',
+        type: 'error',
         content: text,
         duration: 2,
       });
@@ -178,7 +178,7 @@ const Apptable = (props:Props) => {
   const handleButtonEvent = async (e: React.MouseEvent, blog: UserData) => {
     e.stopPropagation(); // Prevents the row click event from being triggered
     const status = blog.status;
-    const userConfirmed = window.confirm(`Bạn có chắc ${status?'khóa':'mở khóa'} tài khoản ${blog.username}`);
+    const userConfirmed = window.confirm(`Bạn có chắc ${status ? 'khóa' : 'mở khóa'} tài khoản ${blog.username}`);
     if (!userConfirmed) {
       return; // User canceled the deletion
     }
@@ -191,16 +191,19 @@ const Apptable = (props:Props) => {
         },
         body: JSON.stringify({ status: !blog.status }),
       });
-  
+
       if (!response.ok) {
         openMessageError(`Request failed`);
+        return;
       }
-  
+
       const updatedUser = await response.json();
       openMessageSuccess(updatedUser);
-      customFunction();
-      if(isFiltering){
+      
+      if (isFiltering) {
         handleSearch();
+      }else{
+        customFunction();
       }
     } catch (error) {
       openMessageError('Đã có lỗi xảy ra')
@@ -279,8 +282,8 @@ const Apptable = (props:Props) => {
                 <td><div style={{ display: 'flex', justifyContent: 'center' }}>{blog.phoneNumber}</div></td>
                 <td><div style={{ display: 'flex', justifyContent: 'center' }}>{getRoleName(blog.role_id)}</div></td>
                 <td><div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button variant={blog.status?'success':'danger'} size='sm' onClick={(e) => handleButtonEvent(e, blog)}>{blog.status?'Active':'InActive'}</Button>
-                  </div>
+                  <Button variant={blog.status ? 'success' : 'danger'} size='sm' onClick={(e) => handleButtonEvent(e, blog)}>{blog.status ? 'Active' : 'InActive'}</Button>
+                </div>
                 </td>
               </tr>
             ))
@@ -293,7 +296,7 @@ const Apptable = (props:Props) => {
                 <td><div style={{ display: 'flex', justifyContent: 'center' }}>{getRoleName(blog.role_id)}</div></td>
                 <td>
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                  <Button variant={blog.status?'success':'danger'} size='sm' onClick={(e) => handleButtonEvent(e, blog)}>{blog.status?'Active':'InActive'}</Button>
+                    <Button variant={blog.status ? 'success' : 'danger'} size='sm' onClick={(e) => handleButtonEvent(e, blog)}>{blog.status ? 'Active' : 'InActive'}</Button>
                   </div>
                 </td>
               </tr>

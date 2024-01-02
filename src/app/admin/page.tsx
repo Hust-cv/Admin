@@ -44,7 +44,7 @@ const items: MenuItem[] = [
     getItem('Đăng xuất', '3', <LogoutOutlined />),
     getItem('Đổi mật khẩu', '4', <UserSwitchOutlined />),
   ]),
-  getItem('Menu', 'sub2', <TeamOutlined />, [getItem('Tài khoản', '5', <SolutionOutlined />)]),
+  getItem('Menu', 'sub2', <TeamOutlined />, [getItem('Người dùng', '5', <SolutionOutlined />)]),
 ];
 interface AdminData {
     id: BigInteger;
