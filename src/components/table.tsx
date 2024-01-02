@@ -147,7 +147,7 @@ const Apptable = (props:Props) => {
       }
       else {
         const data = await response.json();
-        openMessageSuccess('Success')
+        // openMessageSuccess('Success')
         setFilteredUsers(data);
         setIsFiltering(true);
       }
@@ -193,12 +193,15 @@ const Apptable = (props:Props) => {
       });
   
       if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
+        openMessageError(`Request failed`);
       }
   
       const updatedUser = await response.json();
       openMessageSuccess(updatedUser);
       customFunction();
+      if(isFiltering){
+        handleSearch();
+      }
     } catch (error) {
       openMessageError('Đã có lỗi xảy ra')
     }
@@ -276,7 +279,7 @@ const Apptable = (props:Props) => {
                 <td><div style={{ display: 'flex', justifyContent: 'center' }}>{blog.phoneNumber}</div></td>
                 <td><div style={{ display: 'flex', justifyContent: 'center' }}>{getRoleName(blog.role_id)}</div></td>
                 <td><div style={{ display: 'flex', justifyContent: 'center' }}>
-                <Button variant={blog.status?'success':'danger'} size='sm' onClick={(e) => handleButtonEvent(e, blog)}>{blog.status?'Acitive':'InActive'}</Button>
+                <Button variant={blog.status?'success':'danger'} size='sm' onClick={(e) => handleButtonEvent(e, blog)}>{blog.status?'Active':'InActive'}</Button>
                   </div>
                 </td>
               </tr>
@@ -290,7 +293,7 @@ const Apptable = (props:Props) => {
                 <td><div style={{ display: 'flex', justifyContent: 'center' }}>{getRoleName(blog.role_id)}</div></td>
                 <td>
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                  <Button variant={blog.status?'success':'danger'} size='sm' onClick={(e) => handleButtonEvent(e, blog)}>{blog.status?'Acitive':'InActive'}</Button>
+                  <Button variant={blog.status?'success':'danger'} size='sm' onClick={(e) => handleButtonEvent(e, blog)}>{blog.status?'Active':'InActive'}</Button>
                   </div>
                 </td>
               </tr>
