@@ -26,7 +26,10 @@ const getRoleName = (role_id: number): string => {
 
 const UserInfoModal: React.FC<Props> = ({ user, show, handleClose }) => {
   if (!user) return null;
-
+  const moment = require('moment');
+  const formattedBirthday = moment(user.birthDay).format('DD/MM/YYYY');
+  const formattedCreatedAt = moment(user.createdAt).format('DD/MM/YYYY')
+  const formattedUpdateAt = moment(user.updatedAt).format('DD/MM/YYYY')
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -36,9 +39,9 @@ const UserInfoModal: React.FC<Props> = ({ user, show, handleClose }) => {
         <p>Tài khoản: {user.username}</p>
         <p>Email: {user.email}</p>
         <p>Phone Number: {user.phoneNumber}</p>
-        <p>Birthday: {user.birthDay}</p>
-        <p>Ngày tạo tài khoản: {user.createdAt}</p>
-        <p>Ngày thay đổi thông tin gần nhất: {user.updatedAt}</p>
+        <p>Birthday: {formattedBirthday}</p>
+        <p>Ngày tạo tài khoản: {formattedCreatedAt}</p>
+        <p>Ngày thay đổi thông tin gần nhất: {formattedUpdateAt}</p>
         <p>Chức vụ: {getRoleName(user.role_id)}</p>
         <p>Trạng thái: {user.status ? 'Active' : 'Inactive'}</p>
       </Modal.Body>

@@ -48,6 +48,7 @@ const Apptable = (props: Props) => {
   const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
   const [isFiltering, setIsFiltering] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [isEmailValid, setIsEmailValid] = useState(true);
   const key = 'updatable';
 
   const openMessageSuccess = (text: string) => {
@@ -90,7 +91,16 @@ const Apptable = (props: Props) => {
   // Hàm cập nhật giá trị bộ lọc
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFilters(prevFilters => ({ ...prevFilters, [name]: value }));
+    if (name === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      setIsEmailValid(emailRegex.test(value));
+    }
+    if (name === 'phoneNumber') {
+      const numericValue = value.replace(/\D/g, ''); // Remove non-numeric characters
+      setFilters((prevFilters) => ({ ...prevFilters, [name]: numericValue.slice(0, 10) }));
+    } else {
+      setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
+    }
   };
 
   const getRoleName = (role_id: number): string => {
@@ -103,23 +113,11 @@ const Apptable = (props: Props) => {
     try {
       let endpoint = '';
       let body = {};
-      if (username && email && phoneNumber) {
-        endpoint = '/admin/allUserCheck';
-        body = { username, email, phoneNumber }
+      if (!isEmailValid) {
+        openMessageError('Vui lòng nhập đúng định dạng email');
+        return;
       }
-      else if (username && email) {
-        endpoint = '/admin/allEmailUserName';
-        body = { username, email }
-      }
-      else if (email && phoneNumber) {
-        endpoint = '/admin/allEmailPhoneNumber';
-        body = { email, phoneNumber }
-      }
-      else if (username && phoneNumber) {
-        endpoint = '/admin/allUsernamePhoneNumber'
-        body = { username, phoneNumber }
-      }
-      else if (username) {
+      if (username) {
         endpoint = '/admin/allUserByUsername';
         body = { username };
       } else if (email) {
@@ -128,7 +126,21 @@ const Apptable = (props: Props) => {
       } else if (phoneNumber) {
         endpoint = '/admin/allUserBySDT';
         body = { phoneNumber };
-      } else {
+      } else if (username && email) {
+        endpoint = '/admin/allEmailUserName';
+        body = { username, email }
+      } else if (email && phoneNumber) {
+        endpoint = '/admin/allEmailPhoneNumber';
+        body = { email, phoneNumber }
+      } else if (username && phoneNumber) {
+        endpoint = '/admin/allUsernamePhoneNumber'
+        body = { username, phoneNumber }
+      }
+      else if (username && email && phoneNumber) {
+        endpoint = '/admin/allUserCheck';
+        body = { username, email, phoneNumber }
+      }
+      else {
         openMessageError("Vui lòng nhập nội dung tìm kiếm")
         return;
       }
@@ -147,7 +159,7 @@ const Apptable = (props: Props) => {
       }
       else {
         const data = await response.json();
-        // openMessageSuccess('Success')
+
         setFilteredUsers(data);
         setIsFiltering(true);
       }
@@ -165,7 +177,6 @@ const Apptable = (props: Props) => {
     setIsFiltering(false);
     customFunction();
   };
-
 
   const handleUserNameClick = (user: UserData) => {
     setSelectedUser(user);
@@ -199,10 +210,10 @@ const Apptable = (props: Props) => {
 
       const updatedUser = await response.json();
       openMessageSuccess(updatedUser);
-      
+
       if (isFiltering) {
         handleSearch();
-      }else{
+      } else {
         customFunction();
       }
     } catch (error) {
@@ -242,7 +253,7 @@ const Apptable = (props: Props) => {
           <div className="col-md-4">
             <label>Email:</label>
             <input
-              className="form-control"
+              className={`form-control ${!isEmailValid ? 'is-invalid' : ''}`}
               name="email"
               value={filters.email}
               onChange={handleFilterChange}

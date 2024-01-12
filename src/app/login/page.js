@@ -68,7 +68,7 @@ const Form = styled.form`
  `;
 
 const Title = styled.h1`
-font-size: 30px;
+font-size: 40px;
  font-weight: bold;
  margin: 0;
  `;
@@ -217,7 +217,7 @@ export default function Page() {
     setTimeout(() => {
       messageApi.open({
         key,
-        type:'success',
+        type: 'success',
         content: text,
         duration: 2,
       });
@@ -232,7 +232,7 @@ export default function Page() {
     setTimeout(() => {
       messageApi.open({
         key,
-        type:'error',
+        type: 'error',
         content: text,
         duration: 2,
       });
@@ -287,7 +287,6 @@ export default function Page() {
     }));
   };
 
-
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (!signIn && !isPasswordMatch()) {
@@ -331,16 +330,13 @@ export default function Page() {
         const responseData = await response.json();
         setCookie('token', responseData.token, 1);
         openMessageSuccess('Đăng nhập thành công, tự động chuyển trang admin');
-        router.push('/admin');
-
+        router.push('/');
       }
     } catch (error) {
       openMessageError('Lỗi');
     }
   };
-const handleDangKy=()=>{
-openMessageError('Bạn không được phép sử dụng tính năng này')
-}
+
   return (
     <>{contextHolder}
       <Body>
@@ -410,7 +406,6 @@ openMessageError('Bạn không được phép sử dụng tính năng này')
                 onChange={handleInputChange}
               />
 
-              <Anchor href='#'>Quên mật khẩu?</Anchor>
               <Button type='submit'>Đăng nhập</Button>
             </Form>
           </SignInContainer>
@@ -428,13 +423,7 @@ openMessageError('Bạn không được phép sử dụng tính năng này')
               </LeftOverlayPanel>
 
               <RightOverlayPanel $signinIn={signIn}>
-                <Title>Xin chào, bạn!</Title>
-                <Paragraph>
-                  Nhập thông tin cá nhân của bạn và bắt đầu cuộc hành trình cùng chúng tôi
-                </Paragraph>
-                <GhostButton onClick={handleToggle}>
-                  Đăng ký
-                </GhostButton>
+                <Title>Chào mừng bạn trở lại HustCV</Title>
               </RightOverlayPanel>
             </Overlay>
           </OverlayContainer>
