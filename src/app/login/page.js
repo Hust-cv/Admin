@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { useRouter } from 'next/navigation'
 import { config } from '@/config/config';
 import { message } from 'antd';
+import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 const Body = styled.div`
 background: #f6f5f7;
 display: flex;
@@ -68,13 +69,17 @@ const Form = styled.form`
  `;
 
 const Title = styled.h1`
-font-size: 40px;
+ font-size: 40px;
  font-weight: bold;
  margin: 0;
  `;
+const InputContainer = styled.div`
+ position: relative;
+ width: 100%;
+`;
 
 const Input = styled.input`
-font-size: 14px;
+ font-size: 14px;
  background-color: #eee;
  border: none;
  padding: 10px 15px;
@@ -83,6 +88,13 @@ font-size: 14px;
  color: black;
  `;
 
+const Icon = styled.div`
+ position: absolute;
+ right: 10px;
+ top: 50%;
+ transform: translateY(-50%);
+ cursor: pointer;
+`;
 
 const Button = styled.button`
     border-radius: 20px;
@@ -206,6 +218,7 @@ function getCookie(cname) {
 export default function Page() {
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
+  const [showPassword, setShowPassword] = useState(false);
   const key = 'updatable';
 
   const openMessageSuccess = (text) => {
@@ -278,7 +291,9 @@ export default function Page() {
   const handleToggle = () => {
     setSignIn(!signIn);
   };
-
+  const handleTogglePassword = () => {
+    setShowPassword(!showPassword);
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -398,14 +413,19 @@ export default function Page() {
                 value={formData.userName}
                 onChange={handleInputChange}
               />
-              <Input
-                type='passWord'
-                name='passWord'
-                placeholder='Mật khẩu'
-                value={formData.passWord}
-                onChange={handleInputChange}
-              />
-
+              <InputContainer>
+                <Input
+                  type={showPassword ? 'text' : 'password'}
+                  name='passWord'
+                  placeholder='Mật khẩu'
+                  value={formData.passWord}
+                  onChange={handleInputChange}
+                  style={{ borderColor: isPasswordMatch() ? 'initial' : 'red' }}
+                />
+                <Icon onClick={handleTogglePassword}>
+                  {showPassword ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                </Icon>
+              </InputContainer>
               <Button type='submit'>Đăng nhập</Button>
             </Form>
           </SignInContainer>
