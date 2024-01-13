@@ -26,29 +26,22 @@ interface FilterState {
 }
 
 interface Props {
-  blogs: {
-    id: number;
-    username: string;
-    email: string;
-    status: boolean;
-    role_id: number;
-    birthDay: string;
-    createdAt: string;
-    updatedAt: string;
-    phoneNumber: string;
-  }[];
+  blogs: UserData[];
+  sumData: any;  // Define the type of sumData based on what you expect it to be
   customFunction: () => void;
 }
 
 
+
 const Apptable = (props: Props) => {
   let token = getCookie('token');
-  const { blogs, customFunction } = props;
+  const { blogs,sumData ,customFunction } = props;
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
   const [isFiltering, setIsFiltering] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [isEmailValid, setIsEmailValid] = useState(true);
+
   const key = 'updatable';
 
   const openMessageSuccess = (text: string) => {
@@ -259,7 +252,6 @@ const Apptable = (props: Props) => {
               onChange={handleFilterChange}
             />
           </div>
-
           <div className="col-md-4">
             <label>Số điện thoại:</label>
             <input
@@ -270,8 +262,8 @@ const Apptable = (props: Props) => {
             />
           </div>
         </div>
-
       </div>
+      
       <Table striped bordered hover className="custom-table">
         <thead>
           <tr>

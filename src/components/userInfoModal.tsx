@@ -38,8 +38,8 @@ const UserInfoModal: React.FC<Props> = ({ user, show, handleClose }) => {
       <Modal.Body>
         <p>Tài khoản: {user.username}</p>
         <p>Email: {user.email}</p>
-        <p>Phone Number: {user.phoneNumber}</p>
-        <p>Birthday: {formattedBirthday}</p>
+        <p>Số điện thoại: {user.phoneNumber}</p>
+        <p>Ngày sinh: {formattedBirthday}</p>
         <p>Ngày tạo tài khoản: {formattedCreatedAt}</p>
         <p>Ngày thay đổi thông tin gần nhất: {formattedUpdateAt}</p>
         <p>Chức vụ: {getRoleName(user.role_id)}</p>

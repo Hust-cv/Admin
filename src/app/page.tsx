@@ -1,5 +1,4 @@
 "use client"
-"use client"
 import React, { useState, useEffect } from 'react';
 import { config } from '@/config/config';
 import {
@@ -57,6 +56,7 @@ interface AdminData {
 const App: React.FC = () => {
   const router = useRouter();
   const [usersData, setUsersData] = useState(null);
+  const [sumData, setSumData] = useState(null);
   const [adminData, setAdminData] = useState<AdminData | null>(null);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -99,7 +99,8 @@ const App: React.FC = () => {
     .then(data => {
       if (data) {
         // console.log(data)
-        setUsersData(data);
+        setUsersData(data.users);
+        setSumData(data.sum);
       }
     })
   }
@@ -148,7 +149,7 @@ const App: React.FC = () => {
             }}
           >
             {usersData ? (
-              <Apptable blogs={usersData} customFunction={reloadTableData} />
+              <Apptable blogs={usersData} sumData={sumData} customFunction={reloadTableData} />
             ) : (
               <h3>Trang chủ</h3>
             )}
