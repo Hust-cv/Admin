@@ -192,12 +192,13 @@ const Apptable = (props: Props) => {
       setIsEmailValid(true)
       setFilters({ username: "", email: "", phoneNumber: "" });
       getUsers(page);
+      customFunction();
     } else {
       setIsEmailValid(true)
       setFilters({ username: "", email: "", phoneNumber: "" });
       setIsPaginated(true);
       setIsFiltering(false);
-      customFunction;
+      customFunction();
     }
   };
 
