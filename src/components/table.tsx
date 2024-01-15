@@ -44,7 +44,6 @@ const Apptable = (props: Props) => {
   const [isPaginated, setIsPaginated] = useState(true);
   const [page, setPage] = useState(null);
   const [countUser, setCountUser] = useState(null);
-  const [pageOne, SetPageOne] = useState(false);
   const key = "updatable";
 
   const openMessageSuccess = (text: string) => {
@@ -189,13 +188,14 @@ const Apptable = (props: Props) => {
 
   // Hàm xử lý khi nhấn reset
   const handleReset = () => {
-    if (isPaginated) {
+    if (isPaginated&&isFiltering) {
+      setIsEmailValid(true)
       setFilters({ username: "", email: "", phoneNumber: "" });
       getUsers(page);
     } else {
+      setIsEmailValid(true)
       setFilters({ username: "", email: "", phoneNumber: "" });
       setIsPaginated(true);
-      SetPageOne(true);
       setIsFiltering(false);
       customFunction;
     }
@@ -335,7 +335,7 @@ const Apptable = (props: Props) => {
               renderOnZeroPageCount={null}
             />
             <p>
-              Hiển thị {updateDisplayRange(!isFiltering || pageOne ? 1 : page)}{" "}
+              Hiển thị {updateDisplayRange((isFiltering) ? page : 1)}{" "}
               của {sumData} kết quả
             </p>
           </div>
