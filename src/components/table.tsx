@@ -240,9 +240,18 @@ const Apptable = (props: Props) => {
       openMessageSuccess(updatedUser);
 
       if (!isPaginated) {
-        handleSearch();
-      } else {
+        if(filters.username || filters.email || filters.phoneNumber) handleSearch();
+        else         
+        {
+          setIsPaginated(true)
+          setIsFiltering(false)
+          customFunction();
+        }
+      } else if(isFiltering) {
         getUsers(page);
+      } else 
+      {
+        customFunction();
       }
     } catch (error) {
       openMessageError("Đã có lỗi xảy ra");
