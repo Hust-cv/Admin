@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Form } from "react-bootstrap";
+import { Table, Button, Spinner } from "react-bootstrap";
 import { message } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
@@ -18,6 +18,11 @@ interface UserData {
   createdAt: string;
   updatedAt: string;
   phoneNumber: string;
+  business: {
+    businessName: string;
+    businessAddress: string;
+    businessWebsite: string;
+  };
 }
 
 interface FilterState {
@@ -44,6 +49,8 @@ const Apptable = (props: Props) => {
   const [isPaginated, setIsPaginated] = useState(true);
   const [page, setPage] = useState(null);
   const [countUser, setCountUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
   const key = "updatable";
 
   const openMessageSuccess = (text: string) => {
@@ -129,14 +136,28 @@ const Apptable = (props: Props) => {
   // Hàm xử lý khi nhấn tìm kiếm
   const handleSearch = async () => {
     const { username, email, phoneNumber } = filters;
+    setIsLoading(true);
     try {
       let endpoint = "";
       let body = {};
       if (!isEmailValid) {
         openMessageError("Vui lòng nhập đúng định dạng email");
+        setIsLoading(false);
         return;
       }
-      if (username) {
+      if (username && email && phoneNumber) {
+        endpoint = "/admin/allUserCheck";
+        body = { username, email, phoneNumber };
+      } else if (username && phoneNumber) {
+        endpoint = "/admin/allUsernamePhoneNumber";
+        body = { username, phoneNumber };
+      } else if (email && phoneNumber) {
+        endpoint = "/admin/allEmailPhoneNumber";
+        body = { email, phoneNumber };
+      } else if (username && email) {
+        endpoint = "/admin/allEmailUserName";
+        body = { username, email };
+      } else if (username) {
         endpoint = "/admin/allUserByUsername";
         body = { username };
       } else if (email) {
@@ -145,20 +166,9 @@ const Apptable = (props: Props) => {
       } else if (phoneNumber) {
         endpoint = "/admin/allUserBySDT";
         body = { phoneNumber };
-      } else if (username && email) {
-        endpoint = "/admin/allEmailUserName";
-        body = { username, email };
-      } else if (email && phoneNumber) {
-        endpoint = "/admin/allEmailPhoneNumber";
-        body = { email, phoneNumber };
-      } else if (username && phoneNumber) {
-        endpoint = "/admin/allUsernamePhoneNumber";
-        body = { username, phoneNumber };
-      } else if (username && email && phoneNumber) {
-        endpoint = "/admin/allUserCheck";
-        body = { username, email, phoneNumber };
       } else {
         openMessageError("Vui lòng nhập nội dung tìm kiếm");
+        setIsLoading(false);
         return;
       }
 
@@ -181,26 +191,37 @@ const Apptable = (props: Props) => {
         setIsFiltering(true);
         setIsPaginated(false);
       }
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       openMessageError("Error during fetch");
     }
   };
 
-  // Hàm xử lý khi nhấn reset
-  const handleReset = () => {
-    if (isPaginated&&isFiltering) {
-      setIsEmailValid(true)
-      setFilters({ username: "", email: "", phoneNumber: "" });
-      getUsers(page);
-      customFunction();
-    } else {
-      setIsEmailValid(true)
-      setFilters({ username: "", email: "", phoneNumber: "" });
-      setIsPaginated(true);
-      setIsFiltering(false);
-      customFunction();
+  const handleReset = async () => {
+    setIsLoading2(true);
+  
+    try {
+      if (isPaginated && isFiltering) {
+        setIsEmailValid(true);
+        setFilters({ username: "", email: "", phoneNumber: "" });
+        await getUsers(page); // Await for getUsers to complete
+        await customFunction(); // Await for customFunction to complete
+      } else {
+        setIsEmailValid(true);
+        setFilters({ username: "", email: "", phoneNumber: "" });
+        setIsPaginated(true);
+        setIsFiltering(false);
+        await customFunction(); // Await for customFunction to complete
+      }
+    } catch (error) {
+      // Handle any errors here
+      console.error('Error in handleReset:', error);
     }
+  
+    setIsLoading2(false);
   };
+  
 
   const handleUserNameClick = (user: UserData) => {
     setSelectedUser(user);
@@ -241,17 +262,16 @@ const Apptable = (props: Props) => {
       openMessageSuccess(updatedUser);
 
       if (!isPaginated) {
-        if(filters.username || filters.email || filters.phoneNumber) handleSearch();
-        else         
-        {
-          setIsPaginated(true)
-          setIsFiltering(false)
+        if (filters.username || filters.email || filters.phoneNumber)
+          handleSearch();
+        else {
+          setIsPaginated(true);
+          setIsFiltering(false);
           customFunction();
         }
-      } else if(isFiltering) {
+      } else if (isFiltering) {
         getUsers(page);
-      } else 
-      {
+      } else {
         customFunction();
       }
     } catch (error) {
@@ -281,11 +301,29 @@ const Apptable = (props: Props) => {
           </div>
           <div className="col-md-6 d-flex justify-content-end">
             <div>
-              <Button variant="primary" size="sm" onClick={handleSearch}>
-                Tìm kiếm
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleSearch}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Spinner as="span" animation="border" size="sm" />
+                ) : (
+                  "Tìm kiếm"
+                )}
               </Button>{" "}
-              <Button variant="secondary" size="sm" onClick={handleReset}>
-                Reset
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={handleReset}
+                disabled={isLoading}
+              >
+                {isLoading2 ? (
+                  <Spinner as="span" animation="border" size="sm" />
+                ) : (
+                  "Reset"
+                )}
               </Button>
             </div>
           </div>
@@ -345,8 +383,8 @@ const Apptable = (props: Props) => {
               renderOnZeroPageCount={null}
             />
             <p>
-              Hiển thị {updateDisplayRange((isFiltering) ? page : 1)}{" "}
-              của {sumData} kết quả
+              Hiển thị {updateDisplayRange(isFiltering ? page : 1)} của{" "}
+              {sumData} kết quả
             </p>
           </div>
         </>

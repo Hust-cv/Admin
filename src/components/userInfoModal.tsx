@@ -12,6 +12,11 @@ interface UserData {
   createdAt: string;
   updatedAt: string;
   phoneNumber: string;
+  business:{
+    businessName: string;
+    businessAddress: string;
+    businessWebsite: string;
+  }
 }
 
 interface Props {
@@ -43,6 +48,15 @@ const UserInfoModal: React.FC<Props> = ({ user, show, handleClose }) => {
         <p>Ngày tạo tài khoản: {formattedCreatedAt}</p>
         <p>Ngày thay đổi thông tin gần nhất: {formattedUpdateAt}</p>
         <p>Chức vụ: {getRoleName(user.role_id)}</p>
+        {
+          user.business&&(
+          <>
+          <p>Tên công ty: {user.business.businessName}</p>
+          <p>Địa chỉ công ty: {user.business.businessAddress}</p>
+          <p>Website công ty: {user.business.businessWebsite}</p>
+          </>
+          )
+        }
         <p>Trạng thái: {user.status ? 'Active' : 'Inactive'}</p>
       </Modal.Body>
       <Modal.Footer>
