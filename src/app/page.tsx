@@ -56,7 +56,8 @@ interface AdminData {
 const App: React.FC = () => {
   const router = useRouter();
   const [usersData, setUsersData] = useState(null);
-  const [sumData, setSumData] = useState(null);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalPages,setTotalPages] = useState(0)
   const [adminData, setAdminData] = useState<AdminData | null>(null);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -89,7 +90,7 @@ const App: React.FC = () => {
   }, []); // Empty dependency array to run only once on component mount
   const reloadTableData = async () => {
     const token = getCookie('token');
-    await fetch(`${config.apiUrl}/admin/allUser`, {
+    await fetch(`${config.apiUrl}/admin/getUsers/1`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -100,7 +101,8 @@ const App: React.FC = () => {
       if (data) {
         // console.log(data)
         setUsersData(data.users);
-        setSumData(data.sum);
+        setTotalUsers(data.totalUsers);
+        setTotalPages(data.totalPages)
       }
     })
   }
@@ -120,7 +122,7 @@ const App: React.FC = () => {
       router.push('/changePassword');
     }
     else{
-      window.location.href ='https://google.com';
+      window.location.href ='http://localhost:3000/';
     };
 
   };
@@ -149,7 +151,7 @@ const App: React.FC = () => {
             }}
           >
             {usersData ? (
-              <Apptable blogs={usersData} sumData={sumData} customFunction={reloadTableData} />
+              <Apptable blogs={usersData} sumData={totalUsers} pageData={totalPages} customFunction={reloadTableData}/>
             ) : (
               <h3>Trang chủ</h3>
             )}
